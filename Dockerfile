@@ -3,8 +3,9 @@ FROM johnpapa/angular-cli as client-app
 ARG env=prod
 LABEL authors="Roger Boardman"
 WORKDIR /usr/src/app
-COPY ["package.json", "npm-shrinkwrap.json*", "./"]
-RUN npm install --silent
+COPY ["package.json", "npm-shrinkwrap.json*", "yarn.lock*", "./"]
+RUN npm install yarn
+RUN yarn install --no-progress
 COPY . .
 RUN ng build --prod --build-optimizer --environment $env
 
