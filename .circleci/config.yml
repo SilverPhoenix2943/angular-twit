@@ -28,7 +28,7 @@ jobs:
           name: angular-lint
           command: yarn lint
           prefix: lint
-  deploy-job:
+  deploy:
     docker:
       - image: my-image
     working_directory: /tmp/angular-twit
