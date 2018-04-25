@@ -34,8 +34,8 @@ jobs:
     working_directory: /tmp/angular-twit
     steps:
       - run:
-        name: Deploy Master to GKE
-        command: ./deploy.sh
+          name: Deploy Master to GKE
+          command: ./deploy.sh
 
 
 workflows:
