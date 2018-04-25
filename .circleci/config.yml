@@ -27,4 +27,25 @@ jobs:
       - run:
           name: angular-lint
           command: yarn lint
-prefix: lint
+          prefix: lint
+  deploy-job:
+    docker:
+      - image: my-image
+    working_directory: /tmp/angular-twit
+    steps:
+      - run:
+        name: Deploy Master to GKE
+        command: ./deploy.sh
+
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+        requires:
+          - build
+        filters:
+          branches:
+            only: master
