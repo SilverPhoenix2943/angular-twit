@@ -20,10 +20,10 @@ jobs:
             - ./node_modules
       - run:
           name: angular-build
-          command: yarn build --prod --aot
+          command: yarn build --prod --aot --progress false
       - run:
           name: angular-test
-          command: yarn test --single-run
+          command: yarn test --single-run  --progress false
       - run:
           name: angular-lint
           command: yarn lint
