@@ -69,6 +69,7 @@ jobs:
     docker:
       - image: boardman/angular-twit-circleci-base:0.0.1
     steps:
+      - setup_remote_docker
       - restore_cache:
           keys:
             - v1-{{ .Branch }}
