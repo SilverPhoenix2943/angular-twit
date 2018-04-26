@@ -7,7 +7,7 @@ COPY ["package.json", "npm-shrinkwrap.json*", "yarn.lock*", "./"]
 RUN npm install yarn
 RUN yarn install --no-progress
 COPY . .
-RUN ng build --prod --build-optimizer --environment $env
+RUN ng build --prod --build-optimizer --aot --environment $env
 
 # Final image
 FROM nginx:1.13
