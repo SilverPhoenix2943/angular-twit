@@ -26,16 +26,16 @@ jobs:
           name: Linting
           command: yarn lint
           prefix: lint
-      - run:
-          name: Push application Docker image
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]
-            then
-              login="$(aws ecr get-login)"
-              ${login/"-e none"/""}
-              docker tag app "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
-              docker push "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
-            fi
+      # - run:
+      #     name: Push application Docker image
+      #     command: |
+      #       if [ "${CIRCLE_BRANCH}" == "master" ]
+      #       then
+      #         login="$(aws ecr get-login)"
+      #         ${login/"-e none"/""}
+      #         docker tag app "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
+      #         docker push "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
+      #       fi
   build_image:
     working_directory: ~/app
     docker:
