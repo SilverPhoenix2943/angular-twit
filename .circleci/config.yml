@@ -98,7 +98,7 @@ jobs:
             docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/angular-twit:$CIRCLE_SHA1
       - run:
           name: Patch deployment
-          command: echo NOT IMPLEMENTED - patch deployment to be added
+          command: kubectl patch deployment angular-twit -p '{"spec":{"template":{"spec":{"containers":[{"name":"angular-twit","image":"us.gcr.io/circle-ctl-test/angular-twit:'"$CIRCLE_SHA1"'"}]}}}}'
 
 
 workflows:
