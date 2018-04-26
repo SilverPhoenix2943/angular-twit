@@ -21,7 +21,7 @@ jobs:
             - ./node_modules
       - run:
           name: angular-build
-          command: yarn build --prod --aot --progress false
+          command: yarn build --aot --progress false
       - run:
           name: angular-test
           command: yarn test --single-run  --progress false
@@ -56,7 +56,7 @@ jobs:
           name: Push application Docker image
           command: |
             if ["${CIRCLE_BRANCH}" == "master"]; then
-              login="${aws ecr get-login)"
+              login="$(aws ecr get-login)"
               ${login}
               docker tag app "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
               docker push "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
