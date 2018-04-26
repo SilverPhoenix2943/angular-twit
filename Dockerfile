@@ -14,3 +14,4 @@ FROM nginx:1.13
 WORKDIR /usr/share/nginx/html
 COPY --from=client-app /usr/src/app/dist ./
 COPY ./nginx-custom.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80 443
