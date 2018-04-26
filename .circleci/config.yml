@@ -8,7 +8,6 @@ jobs:
           CHROME_BIN: "/usr/bin/google-chrome"
     steps:
       - checkout
-      - setup_remote_docker
       - restore_cache:
           key: dependency-cache-{{ checksum "yarn.lock" }}
       - run:
@@ -68,7 +67,7 @@ jobs:
             - ~/caches/app.tar
   push_and_deploy:
     docker:
-      - image: google/cloud-sdk
+      - image: boardman/angular-twit-circleci-base:0.0.1
     steps:
       - restore_cache:
           keys:
@@ -86,6 +85,7 @@ jobs:
       - run:
           name: Configure gcloud
           command: |
+            gcloud --quiet components update
             gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
