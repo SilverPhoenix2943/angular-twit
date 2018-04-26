@@ -57,10 +57,8 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
-              echo env
-              login="$(aws ecr get-login) --region eu-west-2"
-              echo login
-              ${login}
+              login="$(aws ecr get-login)"
+              ${login/"-e none"/""}
               docker tag app "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
               docker push "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
             fi
