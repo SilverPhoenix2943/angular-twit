@@ -55,7 +55,7 @@ jobs:
       - deploy:
           name: Push application Docker image
           command: |
-            if ["${CIRCLE_BRANCH}" == "master"]
+            if [ "${CIRCLE_BRANCH}" == "master" ]
             then
               echo We are on master, pushing image to AWS ECR
               login="$(aws ecr get-login)"
