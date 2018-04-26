@@ -33,7 +33,7 @@ jobs:
           keys:
             - v1-{{ .Branch }}
           paths:
-            - /caches/app.tar
+            - ~/caches/app.tar
       - run:
           name: Load Docker image layer cache
           command: |
@@ -47,11 +47,11 @@ jobs:
           name: Save Docker image layer cache
           command: |
             mkdir -p /caches
-            docker save -o /caches/app.tar app
+            docker save -o ~/caches/app.tar app
       - save_cache:
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:
-            - /caches/app.tar
+            - ~/caches/app.tar
       - deploy:
           name: Push application Docker image
           command: |
@@ -64,7 +64,7 @@ jobs:
   deploy:
     docker:
       - image: my-image
-    working_directory: /tmp/angular-twit
+    working_directory: ~/app
     steps:
       - run:
           name: Deploy Master to GKE
