@@ -59,12 +59,12 @@ jobs:
             then
               login="$(aws ecr get-login)"
               ${login/"-e none"/""}
-              docker tag app "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
-              docker push "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
+              docker tag app "${ECR_ENDPOINT}/app:app-${CIRCLE_SHA1}"
+              docker push "${ECR_ENDPOINT}/app:app-${CIRCLE_SHA1}"
             fi
   deploy:
     docker:
-      - image: my-image
+      - image: ${ECR_ENDPOINT}/app:app-${CIRCLE_SHA1}
     working_directory: ~/app
     steps:
       - run:
