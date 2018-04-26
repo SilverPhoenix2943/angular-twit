@@ -1,5 +1,5 @@
 # Angular Client app
-FROM johnpapa/angular-cli as client-app
+FROM boardman/angular-cli as client-app
 ARG env=prod
 LABEL authors="Roger Boardman"
 WORKDIR /usr/src/app
