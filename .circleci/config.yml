@@ -58,7 +58,7 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
               echo We are on master, pushing image to AWS ECR
-              login="$(aws ecr get-login)"
+              login="$(aws ecr get-login --region eu-west-2)"
               ${login}
               docker tag app "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
               docker push "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
