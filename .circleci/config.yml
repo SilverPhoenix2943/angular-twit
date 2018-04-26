@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: /app
+    working_directory: ~/app
     docker:
       - image: boardman/angular-twit-circleci-base:0.0.1
         environment:
