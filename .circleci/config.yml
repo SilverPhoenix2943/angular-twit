@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  test:
     working_directory: ~/app
     docker:
       - image: boardman/angular-twit-circleci-base:0.0.1
@@ -20,15 +20,29 @@ jobs:
             - ~/.cache/yarn
             - ./node_modules
       - run:
-          name: angular-build
-          command: yarn build --aot --progress false
-      - run:
-          name: angular-test
+          name: Run tests
           command: yarn test --single-run  --progress false
       - run:
-          name: angular-lint
+          name: Linting
           command: yarn lint
           prefix: lint
+      - run:
+          name: Push application Docker image
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]
+            then
+              login="$(aws ecr get-login)"
+              ${login/"-e none"/""}
+              docker tag app "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
+              docker push "${ECR_ENDPOINT}/app:${CIRCLE_SHA1}"
+            fi
+  build_image:
+    working_directory: ~/app
+    docker:
+      - image: boardman/angular-twit-circleci-base:0.0.1
+    steps:
+      - checkout
+      - setup_remote_docker
       - restore_cache:
           keys:
             - v1-{{ .Branch }}
@@ -38,11 +52,11 @@ jobs:
           name: Load Docker image layer cache
           command: |
             set +o pipefail
-            docker load -i /caches/app.tar | true
+            docker load -i ~/caches/app.tar | true
       - run:
           name: Build application Docker image
           command: |
-            docker build --cache-from=app -t app .
+            docker build --rm=false --cache-from=app -t eu.gcr.io/${GOOGLE_PROJECT_ID}/angular-twit:$CIRCLE_SHA1 .
       - run:
           name: Save Docker image layer cache
           command: |
@@ -52,34 +66,53 @@ jobs:
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:
             - ~/caches/app.tar
-      - deploy:
-          name: Push application Docker image
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]
-            then
-              login="$(aws ecr get-login)"
-              ${login/"-e none"/""}
-              docker tag app "${ECR_ENDPOINT}/app:app-${CIRCLE_SHA1}"
-              docker push "${ECR_ENDPOINT}/app:app-${CIRCLE_SHA1}"
-            fi
-  deploy:
+  push_and_deploy:
     docker:
-      - image: ${ECR_ENDPOINT}/app:app-${CIRCLE_SHA1}
-    working_directory: ~/app
+      - image: google/cloud-sdk
     steps:
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - ~/caches/app.tar
       - run:
-          name: Deploy Master to GKE
-          command: ./deploy.sh
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i ~/caches/app.tar | true
+      - run:
+          name: Store Service Account
+          command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+      - run:
+          name: Configure gcloud
+          command: |
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+            gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+      - run:
+          name: Push image to google container registry
+          command: gcloud docker -- push eu.gcr.io/${GCP_PROJECT}/angular-twit:$CIRCLE_SHA1
+      - run:
+          name: Patch deployment
+          command: echo NOT IMPLEMENTED - patch deployment to be added
 
 
 workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build
-      - deploy:
+      - test
+      - build_image:
           requires:
-            - build
+            - test
           filters:
             branches:
               only: master
+      - push_and_deploy:
+          requires:
+            - build_image
+          filters:
+            branches:
+              only: master
+
