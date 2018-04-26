@@ -90,9 +90,10 @@ jobs:
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
             gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+            gcloud auth configure-docker
       - run:
           name: Push image to google container registry
-          command: gcloud docker -- push eu.gcr.io/${GCP_PROJECT}/angular-twit:$CIRCLE_SHA1
+          command: docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/angular-twit:$CIRCLE_SHA1
       - run:
           name: Patch deployment
           command: echo NOT IMPLEMENTED - patch deployment to be added
