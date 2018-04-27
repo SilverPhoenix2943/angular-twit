@@ -51,8 +51,11 @@ jobs:
           name: Load Docker image layer cache
           command: |
             set +o pipefail
-            docker load -i ~/caches/app.tar
-            docker images
+            if [ -e ~/caches/app.tar ]
+            then
+              docker load -i ~/caches/app.tar
+              docker images
+            fi
       - run:
           name: Build application Docker image
           command: |
