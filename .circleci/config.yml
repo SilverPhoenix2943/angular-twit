@@ -93,7 +93,9 @@ jobs:
             gcloud auth configure-docker
       - run:
           name: Push image to google container registry
-          command: docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/angular-twit:$CIRCLE_SHA1
+          command: |
+            docker tag app eu.gcr.io/${GOOGLE_PROJECT_ID}/angular-twit:$CIRCLE_SHA1
+            docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/angular-twit:$CIRCLE_SHA1
       - run:
           name: Patch deployment
           command: kubectl patch deployment angular-twit -p '{"spec":{"template":{"spec":{"containers":[{"name":"angular-twit","image":"eu.gcr.io/bxthree-kubernetes-test/angular-twit:'"$CIRCLE_SHA1"'"}]}}}}'
