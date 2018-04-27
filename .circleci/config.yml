@@ -51,16 +51,18 @@ jobs:
           name: Load Docker image layer cache
           command: |
             set +o pipefail
-            docker load -i ~/caches/app.tar | true
+            docker load -i ~/caches/app.tar
+            docker images
       - run:
           name: Build application Docker image
           command: |
-            docker build --rm=false --cache-from=app -t eu.gcr.io/${GOOGLE_PROJECT_ID}/angular-twit:$CIRCLE_SHA1 .
+            docker build --cache-from=app -t app .
+            docker images
       - run:
           name: Save Docker image layer cache
           command: |
             mkdir -p ~/caches
-            docker save -o ~/caches/app.tar eu.gcr.io/${GOOGLE_PROJECT_ID}/angular-twit:$CIRCLE_SHA1
+            docker save -o ~/caches/app.tar app
       - save_cache:
           key: v1-{{ .Branch }}-app
           paths:
@@ -79,7 +81,7 @@ jobs:
           name: Load Docker image layer cache
           command: |
             set +o pipefail
-            docker load -i ~/caches/app.tar | true
+            docker load -i ~/caches/app.tar
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
@@ -94,6 +96,7 @@ jobs:
       - run:
           name: Push image to google container registry
           command: |
+            docker images
             docker tag app eu.gcr.io/${GOOGLE_PROJECT_ID}/angular-twit:$CIRCLE_SHA1
             docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/angular-twit:$CIRCLE_SHA1
       - run:
