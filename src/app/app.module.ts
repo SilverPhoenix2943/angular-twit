@@ -10,6 +10,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppComponent } from './app.component';
 
 import { environment } from '../environments/environment';
+import { HttpClientModule } from '@angular/common/http';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
     declarations: [AppComponent],
@@ -18,6 +20,8 @@ import { environment } from '../environments/environment';
         AppRoutingModule,
         BrowserAnimationsModule,
         MatIconModule,
+        HttpClientModule,
+        CoreModule,
         ServiceWorkerModule.register("/ngsw-worker.js", {
             enabled: environment.production
         })
