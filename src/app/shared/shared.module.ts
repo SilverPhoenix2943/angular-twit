@@ -9,7 +9,7 @@ import { MatToolbarModule, MatIconModule } from '@angular/material';
         CommonModule,
         FlexLayoutModule,
         MatToolbarModule,
-        MatIconModule
+        MatIconModule,
     ],
     declarations: [],
     exports: [
